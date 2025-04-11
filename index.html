@@ -2,70 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Dream Study Planet</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
-      color: #333;
+      background: linear-gradient(to right, #cfd9df, #e2ebf0);
+      padding: 30px;
     }
     h1 {
-      font-size: 3em;
-      margin-bottom: 0.2em;
+      color: #333;
+      margin-bottom: 10px;
     }
-    p {
+    .countdown {
+      font-size: 2em;
+      color: #ff5e57;
+      margin: 20px 0;
+    }
+    .quote {
       font-size: 1.2em;
-      margin-bottom: 1em;
+      color: #555;
+      margin-top: 30px;
+    }
+    .byline {
+      margin-top: 40px;
+      font-size: 1em;
+      color: #777;
+      font-style: italic;
     }
     input, button {
       padding: 10px;
-      margin: 5px;
       font-size: 1em;
-      border-radius: 8px;
+      margin: 10px;
       border: none;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border-radius: 8px;
     }
-    #output {
-      margin-top: 20px;
-      font-size: 1.3em;
-      color: darkblue;
+    button {
+      background-color: #ff9a9e;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #f86a6a;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>My Dream Study Planet 🚀</h1>
-  <p>📚 Pain is temporary but regret is permanent 📚</p>
 
-  <input type="text" id="chapter" placeholder="Chapter Name">
-  <input type="datetime-local" id="deadline">
-  <button onclick="calculateTime()">Start Countdown</button>
+  <h1>My Dream Study Planet ✨</h1>
 
-  <div id="output"></div>
+  <h2 id="chapter-name">Chapter: Atomic Structure</h2>
+
+  <input type="datetime-local" id="deadline" />
+  <button onclick="startCountdown()">Start Countdown</button>
+
+  <div class="countdown" id="countdown-timer">
+    No Countdown Started Yet
+  </div>
+
+  <div class="quote">
+    "Pain is temporary but regret is permanent" ❤️
+  </div>
+
+  <div class="byline">
+    ~ By Bayazid Hossen ~
+  </div>
 
   <script>
-    function calculateTime() {
-      const chapter = document.getElementById('chapter').value;
-      const deadline = new Date(document.getElementById('deadline').value);
-      const now = new Date();
-      const diff = deadline - now;
+    let interval;
 
-      if (diff <= 0) {
-        document.getElementById('output').innerHTML = `⏳ Deadline Passed for <b>${chapter}</b>!`;
+    function startCountdown() {
+      const deadlineInput = document.getElementById('deadline').value;
+      if (!deadlineInput) {
+        alert('Please select a deadline first!');
         return;
       }
+      const targetDate = new Date(deadlineInput);
 
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      if (interval) {
+        clearInterval(interval);
+      }
 
-      document.getElementById('output').innerHTML = `
-        <b>${chapter}</b><br>
-        Time Left: ${hours} hours, ${minutes} minutes, ${seconds} seconds
-      `;
+      interval = setInterval(() => {
+        const now = new Date();
+        const difference = targetDate - now;
+
+        if (difference <= 0) {
+          document.getElementById("countdown-timer").innerHTML = "Deadline Reached!";
+          clearInterval(interval);
+          return;
+        }
+
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown-timer").innerHTML = 
+          `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+      }, 1000);
     }
   </script>
+
 </body>
 </html>
+
