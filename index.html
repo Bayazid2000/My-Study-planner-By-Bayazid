@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Dream Study Planet</title>
   <style>
     body {
@@ -50,10 +50,26 @@
       transform: scale(1.05);
     }
 
-    #countdown {
-      margin-top: 40px;
-      font-size: 2em;
+    #timerDisplay {
+      margin-top: 30px;
+      font-size: 1.5em;
       color: #7afcff;
+    }
+
+    .progress-container {
+      width: 80%;
+      background-color: #ddd;
+      margin: 30px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #4caf50, #ff4b5c);
+      transition: width 1s linear;
     }
 
     .quote {
@@ -64,13 +80,16 @@
     }
 
     footer {
-      margin-top: 60px;
+      margin-top: 40px;
+      font-size: 20px;
     }
 
     footer span {
-      font-size: 20px;
+      font-size: 24px;
       color: #ff7eb9;
       font-weight: bold;
+      display: block;
+      margin-top: 20px;
     }
 
     .star {
@@ -95,45 +114,75 @@
     <input type="text" id="subject" placeholder="Enter Subject Name">
     <input type="text" id="chapter" placeholder="Enter Chapter Name">
     <input type="datetime-local" id="deadline">
-    <button onclick="startCountdown()">Start Countdown</button>
+    <button onclick="startTimer()">Start Timer</button>
   </div>
 
-  <div id="countdown"></div>
+  <div id="timerDisplay"></div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
 
   <div class="quote">Pain is temporary but regret is permanent.</div>
 
   <footer>
-    <span>By Bayazid Hossen</span>
+    <span>By - Bayazid Hossen</span>
   </footer>
 
   <script>
-    function startCountdown() {
+    let interval;
+    function startTimer() {
+      clearInterval(interval);
+
       const subject = document.getElementById('subject').value;
       const chapter = document.getElementById('chapter').value;
       const deadline = new Date(document.getElementById('deadline').value);
-      
+
       if (!subject || !chapter || isNaN(deadline)) {
         alert("Please fill all fields properly!");
         return;
       }
 
-      function updateCountdown() {
-        const now = new Date();
-        const diff = deadline - now;
+      const startTime = new Date(); // এখনকার সময়
+      const totalDuration = deadline - startTime; // মোট সময়
 
-        if (diff <= 0) {
-          document.getElementById('countdown').innerHTML = "Finished!";
+      if (totalDuration <= 0) {
+        alert("Deadline must be a future time!");
+        return;
+      }
+
+      function updateTimer() {
+        const now = new Date();
+        const elapsed = now - startTime;
+        const remaining = deadline - now;
+
+        if (remaining <= 0) {
+          document.getElementById('timerDisplay').innerHTML = `
+            <b>Subject:</b> ${subject}<br> 
+            <b>Chapter:</b> ${chapter}<br> 
+            <span style="color: #ff4b5c;">Time Over!</span>
+          `;
+          document.getElementById('progressBar').style.width = "0%";
           clearInterval(interval);
         } else {
-          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-          const minutes = Math.floor((diff / (1000 * 60)) % 60);
-          document.getElementById('countdown').innerHTML = 
-            `Subject: ${subject}<br>Chapter: ${chapter}<br>Time Left: ${hours} Hours ${minutes} Minutes`;
+          const minutesLeft = Math.floor((remaining / (1000 * 60)) % 60);
+          const hoursLeft = Math.floor(remaining / (1000 * 60 * 60));
+          const secondsLeft = Math.floor((remaining / 1000) % 60);
+
+          const percentLeft = (remaining / totalDuration) * 100;
+
+          document.getElementById('timerDisplay').innerHTML = `
+            <b>Subject:</b> ${subject}<br> 
+            <b>Chapter:</b> ${chapter}<br>
+            <b>Remaining Time:</b> ${hoursLeft}h ${minutesLeft}m ${secondsLeft}s
+          `;
+
+          document.getElementById('progressBar').style.width = percentLeft + "%";
         }
       }
 
-      updateCountdown();
-      var interval = setInterval(updateCountdown, 1000);
+      updateTimer();
+      interval = setInterval(updateTimer, 1000);
     }
 
     // Stars animation
@@ -149,3 +198,6 @@
 
 </body>
 </html>
+
+
+
